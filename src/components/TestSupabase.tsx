@@ -39,7 +39,7 @@ const TestSupabase: React.FC = () => {
 
       <input type="file" onChange={handleFileUpload} />
       <button onClick={uploadFile} disabled={!selectedFile}>
-        Upload Photo
+        Upload Photo 77
       </button>
 
       <h2>Uploaded Photos:</h2>
