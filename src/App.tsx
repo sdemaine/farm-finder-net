@@ -5,18 +5,19 @@ import About from './components/About';
 import { Contact } from 'lucide-react';
 import barnLogo from './assets/images/barn_logo_white.svg';
 import farmFinderText from './assets/images/farm_finder_text.svg';
+import Market from './components/Market';
 
-const App: React.FC = () => {
+export default function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
-        
-
-        <main className="flex-grow bg-gray-100">
+        <main className="flex-grow bg-gray-100 h-full">
           <Routes>
             <Route path="/" element={<MapComponent />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/market" element={<Market />} />
+
           </Routes>
         </main>
 
@@ -29,5 +30,3 @@ const App: React.FC = () => {
     </Router>
   );
 };
-
-export default App;
