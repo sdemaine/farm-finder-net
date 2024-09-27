@@ -1,10 +1,7 @@
-import React from 'react';
-import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MapComponent from './components/Map';
 import About from './components/About';
 import { Contact } from 'lucide-react';
-import barnLogo from './assets/images/barn_logo_white.svg';
-import farmFinderText from './assets/images/farm_finder_text.svg';
 import Market from './components/Market';
 
 export default function App() {
