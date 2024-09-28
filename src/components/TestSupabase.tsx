@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { uploadPhoto, listPhotos } from '../supabaseClient';
 
 // Define a type for the file list items
@@ -7,7 +7,7 @@ interface Photo {
   id: string;
 }
 
-const TestSupabase: React.FC = () => {
+export default function TestSupabase() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -53,5 +53,3 @@ const TestSupabase: React.FC = () => {
     </div>
   );
 };
-
-export default TestSupabase;
