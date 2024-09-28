@@ -3,7 +3,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Input } from '@/components/ui/input';
 import { useObservable } from '../hooks/useObservable';
-import { selectAllFarms, selectFilteredFarms, selectSearchQuery } from '../state/store';
+import { selectFilteredFarms, selectSearchQuery } from '../state/store';
 import { setSearchQuery, setAllFarms } from '../state/actions';
 import { Farm } from '../types/Farm';
 

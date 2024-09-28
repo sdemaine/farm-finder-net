@@ -1,4 +1,3 @@
-import React from 'react';
 import { Leaf, Truck, Users, Apple } from 'lucide-react';
 
 export default function About() {
