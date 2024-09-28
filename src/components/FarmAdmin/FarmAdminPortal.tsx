@@ -1,6 +1,4 @@
-type Props = {}
-
-export default function FarmAdminPortal({}: Props) {
+export default function FarmAdminPortal() {
   return (
     <div>FarmAdminPortal</div>
   )

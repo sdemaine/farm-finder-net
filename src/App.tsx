@@ -4,6 +4,7 @@ import About from './components/About';
 import Contact from './components/Contact';
 import { ModalMenu } from '@/components/Menu/ModalMenu';
 import { ConfigMenuModal } from '@/components/Menu/ConfigMenuModal';
+import Dashboard from './components/Dashboard/Dashboard';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/" element={<MapComponent />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </main>
         <footer className="bg-gray-800 text-white py-4">
