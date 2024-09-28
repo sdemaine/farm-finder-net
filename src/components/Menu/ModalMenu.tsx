@@ -33,6 +33,7 @@ export function ModalMenu() {
         </DialogHeader>
         <nav className="flex flex-col space-y-4">
           <Button variant="ghost" className="text-lg justify-start" onClick={() => handleNavigate('/')}>Home</Button>
+          <Button variant="ghost" className="text-lg justify-start" onClick={() => handleNavigate('/dashboard')}>Dashboard</Button>
           <Button variant="ghost" className="text-lg justify-start" onClick={() => handleNavigate('/about')}>About</Button>
           <Button variant="ghost" className="text-lg justify-start" onClick={() => handleNavigate('/contact')}>Contact</Button>
         </nav>
