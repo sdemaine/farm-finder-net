@@ -68,3 +68,17 @@
 .leaflet-control-zoom {
   display: none;
 }
+
+@font-face {
+  font-family: 'Rockwell';
+  src: url('./assets/fonts/ROCK.TTF') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  background-color: white !important;
+}
