@@ -18,11 +18,28 @@ import { Star, RotateCw } from 'lucide-react';
 import ReactCardFlip from 'react-card-flip';
 import BenefitsModal from '@/components/BenefitsModal';
 
+// Import marker icons
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
   map.setView(center, map.getZoom());
   return null;
 }
+
+
+L.Marker.prototype.options.icon = L.icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
 
 // Custom icons for markers
 const defaultIcon = new L.Icon.Default();
@@ -64,8 +81,8 @@ export default function MapComponent() {
   const sortedFarmsList =
     searchQuery.length >= 3
       ? [...filteredFarms].sort(
-          (a, b) => (b.preferred ? 1 : 0) - (a.preferred ? 1 : 0)
-        )
+        (a, b) => (b.preferred ? 1 : 0) - (a.preferred ? 1 : 0)
+      )
       : [];
 
   const FrontCard = () => (
@@ -177,7 +194,7 @@ export default function MapComponent() {
             ))}
           </MapContainer>
         </div>
-        
+
         {/* Search input and results */}
         <div className="absolute top-4 left-4 right-4 z-10">
           <Input
@@ -217,10 +234,10 @@ export default function MapComponent() {
             </ul>
           )}
         </div>
-        
+
         {/* Call to Action Button */}
         <div className="absolute bottom-16 right-4 z-20">
-          <Button 
+          <Button
             onClick={() => setIsBenefitsModalOpen(true)}
             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow-lg"
           >
