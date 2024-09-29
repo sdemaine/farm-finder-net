@@ -18,6 +18,7 @@ export default function Contact() {
     message: '',
   });
 
+  // TODO: Add form validation
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
