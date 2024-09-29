@@ -16,6 +16,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Star, RotateCw } from 'lucide-react';
 import ReactCardFlip from 'react-card-flip';
+import BenefitsModal from '@/components/BenefitsModal';
 
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
@@ -25,12 +26,12 @@ function ChangeView({ center }: { center: [number, number] }) {
 
 // Custom icons for markers
 const defaultIcon = new L.Icon.Default();
-const preferredIcon = new Icon({
-  iconUrl: '/path-to-preferred-icon.png',
-  iconRetinaUrl: '/path-to-preferred-icon@2x.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+// const preferredIcon = new Icon({
+//   iconUrl: '/path-to-preferred-icon.png',
+//   iconRetinaUrl: '/path-to-preferred-icon@2x.png',
+//   iconSize: [25, 41],
+//   iconAnchor: [12, 41],
+// });
 
 export default function MapComponent() {
   const filteredFarms = useObservable(selectFilteredFarms()) || [];
@@ -42,6 +43,7 @@ export default function MapComponent() {
   const [selectedFarm, setSelectedFarm] = useState<Farm | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isCardFlipped, setIsCardFlipped] = useState<boolean>(false);
+  const [isBenefitsModalOpen, setIsBenefitsModalOpen] = useState(false);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -62,8 +64,8 @@ export default function MapComponent() {
   const sortedFarmsList =
     searchQuery.length >= 3
       ? [...filteredFarms].sort(
-        (a, b) => (b.preferred ? 1 : 0) - (a.preferred ? 1 : 0)
-      )
+          (a, b) => (b.preferred ? 1 : 0) - (a.preferred ? 1 : 0)
+        )
       : [];
 
   const FrontCard = () => (
@@ -149,7 +151,8 @@ export default function MapComponent() {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex-grow relative overflow-hidden">
+      <div className="flex-grow relative">
+        {/* Map Container */}
         <div className="absolute inset-0 z-0">
           <MapContainer
             center={mapCenter}
@@ -166,7 +169,7 @@ export default function MapComponent() {
               <Marker
                 key={index}
                 position={[farm.latitude, farm.longitude]}
-                icon={farm.preferred ? preferredIcon : defaultIcon}
+                icon={farm.preferred ? defaultIcon : defaultIcon}
                 eventHandlers={{
                   click: () => handleFarmClick(farm),
                 }}
@@ -174,6 +177,8 @@ export default function MapComponent() {
             ))}
           </MapContainer>
         </div>
+        
+        {/* Search input and results */}
         <div className="absolute top-4 left-4 right-4 z-10">
           <Input
             type="text"
@@ -212,8 +217,24 @@ export default function MapComponent() {
             </ul>
           )}
         </div>
+        
+        {/* Call to Action Button */}
+        <div className="absolute bottom-16 right-4 z-20">
+          <Button 
+            onClick={() => setIsBenefitsModalOpen(true)}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow-lg"
+          >
+            Become a Member
+          </Button>
+        </div>
       </div>
 
+      {/* Footer */}
+      <footer className="bg-[#f9f7f4] border-t border-gray-300 p-2 text-center text-sm z-30 relative">
+        <p>Quick Guide</p>
+      </footer>
+
+      {/* Farm Details Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px] p-0">
           <ReactCardFlip isFlipped={isCardFlipped} flipDirection="horizontal">
@@ -231,9 +252,11 @@ export default function MapComponent() {
         </DialogContent>
       </Dialog>
 
-      <footer className="bg-[#f9f7f4] border-t border-gray-300 p-2 text-center text-sm">
-        <p>Quick Guide</p>
-      </footer>
+      {/* Benefits Modal */}
+      <BenefitsModal
+        isOpen={isBenefitsModalOpen}
+        onClose={() => setIsBenefitsModalOpen(false)}
+      />
     </div>
   );
 }
