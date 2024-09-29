@@ -236,7 +236,7 @@ export default function MapComponent() {
         </div>
 
         {/* Call to Action Button */}
-        <div className="absolute bottom-16 right-4 z-20">
+        <div className="absolute bottom-24 right-4 z-20">
           <Button
             onClick={() => setIsBenefitsModalOpen(true)}
             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow-lg"
