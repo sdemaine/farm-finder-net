@@ -14,7 +14,6 @@ jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
     steps:
-      
       - uses: actions/checkout@v4
 
       - name: Install Bun
@@ -22,7 +21,10 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm i -g vercel
-        
+
+      - name: Install Dependencies
+        run: npm install # Ensure dependencies are installed including react-leaflet and leaflet
+
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ env.VERCEL_TOKEN }}
 
@@ -31,4 +33,3 @@ jobs:
 
       - name: Deploy Project Artifacts
         run: vercel deploy --prebuilt --token=${{ env.VERCEL_TOKEN }}
-        

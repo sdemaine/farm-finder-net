@@ -1,4 +1,4 @@
 {
-  "/farm-admin/dashboard/page": "app/farm-admin/dashboard/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js"
 }
