@@ -1,7 +1,9 @@
 import { run } from 'react-snap';
 
 run({
-  // Your react-snap options here
+  source: 'dist',  // Change this to 'dist' to match your Vite output
+  destination: 'dist',
+  inlineCss: true,
   puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
   puppeteerExecutablePath: '/usr/bin/chromium-browser',
   minifyHtml: {
