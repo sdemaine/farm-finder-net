@@ -27,7 +27,7 @@ const initialFarmOwners = [
   // Add more farm owners as needed
 ];
 
-export function FarmOwners() {
+export default function FarmOwners() {
   const [farmOwners] = useState(initialFarmOwners);
   const [selectedOwner, setSelectedOwner] = useState<any>(null);
   const [message, setMessage] = useState("");
@@ -122,5 +122,3 @@ export function FarmOwners() {
     </div>
   );
 }
-
-export default FarmOwners;
