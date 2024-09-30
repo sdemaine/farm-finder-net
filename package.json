@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && react-snap",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:ci": "tsc --noEmit && eslint src/**/*.{ts,tsx} --max-warnings=0",
     "preview": "vite preview"

@@ -2,7 +2,6 @@ import path from "path"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -17,7 +16,7 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react')) {
+            if (id.includes('react') || id.includes('react-dom')) {
               return 'vendor-react'
             }
             if (id.includes('@mui')) {
@@ -34,12 +33,16 @@ export default defineConfig({
         }
       },
     },
-    chunkSizeWarningLimit: 1000, // Increased warning limit
+    chunkSizeWarningLimit: 1000,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
-  },
-  server: {
-    open: true,
   },
 });
