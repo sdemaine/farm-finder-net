@@ -35,19 +35,11 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ env.VERCEL_TOKEN }}
 
-      - name: Ensure dist directory exists
-        run: |
-          if [ ! -d "dist" ]; then
-            echo "dist directory not found. Creating it."
-            mkdir dist
-            cp .vercel/output/static/index.html dist/
-          fi
-
-      - name: Run react-snap
+      - name: Run custom prerender script
         run: |
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
           PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
-          node scripts/runReactSnap.js
+          node scripts/prerender.js
 
       - name: Deploy Project Artifacts
         run: vercel deploy --prebuilt --token=${{ env.VERCEL_TOKEN }}
