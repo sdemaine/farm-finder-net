@@ -71,12 +71,31 @@
     "tailwindcss": "^3.4.13",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "puppeteer": "^19.0.0"
   },
   "reactSnap": {
     "source": "dist",
-    "destination": "dist",    
+    "destination": "dist",
     "inlineCss": true,
-    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"]
+    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+    "puppeteerExecutablePath": "/usr/bin/chromium-browser",
+    "minifyHtml": {
+      "collapseWhitespace": false,
+      "removeComments": false
+    },
+    "fixWebpackChunksIssue": false,
+    "removeBlobs": true,
+    "cacheAjaxRequests": true,
+    "http2PushManifest": true,
+    "removeScriptTags": false,
+    "removeStyleTags": false,
+    "fixInsertRule": true,
+    "indexSources": true,
+    "asyncScriptTags": true,
+    "preconnectThirdParty": false,
+    "puppeteer": {
+      "cache": false
+    }
   }
 }

@@ -13,16 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          bun-version: latest
+          node-version: '18'
 
       - name: Install dependencies
-        run: bun install
+        run: npm ci
 
       - name: Install Vercel CLI
-        run: bun add -g vercel
+        run: npm install -g vercel
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ env.VERCEL_TOKEN }}
@@ -30,11 +30,14 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ env.VERCEL_TOKEN }}
 
-      - name: Run react-snap
+      - name: Setup Chromium
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser
-          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser bun run postbuild
+
+      - name: Run react-snap
+        run: |
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser npm run postbuild
 
       - name: Deploy Project Artifacts
         run: vercel deploy --prebuilt --prod --token=${{ env.VERCEL_TOKEN }}

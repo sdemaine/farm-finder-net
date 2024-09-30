@@ -13,5 +13,14 @@ export default defineConfig({
     build: {
         outDir: 'dist',
         sourcemap: true,
+        rollupOptions: {
+            output: {
+              manualChunks: {
+                vendor: ['react', 'react-dom', 'react-router-dom'],
+                // Add other large dependencies here
+              },
+            },
+          },
+          chunkSizeWarningLimit: 1000, // Increase the warning limit if needed
     },
 });
