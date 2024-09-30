@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Tooltip, Popup } from 'react-leaflet'; // Popup added here
+import dynamic from 'next/dynamic';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useObservable } from '../../hooks/useObservable';
@@ -11,13 +11,20 @@ import { Farm } from '../../types/Farm';
 import { Button } from '@/components/ui/button';
 import BenefitsModal from '@/components/shared/BenefitsModal';
 import SearchComponent from '@/components/shared/SearchComponent';
-import { Navigation } from 'lucide-react'; // Icon from lucide-react
+import { Navigation } from 'lucide-react';
 import { toast } from 'react-toastify'; // Assuming you have react-toastify or similar
 
+// Dynamic import for react-leaflet components
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
+
+// Configure Leaflet marker icons
 L.Marker.prototype.options.icon = L.icon({
-  iconRetinaUrl: 'leaflet/dist/images/marker-icon-2x.png',
-  iconUrl: 'leaflet/dist/images/marker-icon.png',
-  shadowUrl: 'leaflet/dist/images/marker-shadow.png',
+  iconRetinaUrl: '/leaflet/images/marker-icon-2x.png',
+  iconUrl: '/leaflet/images/marker-icon.png',
+  shadowUrl: '/leaflet/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -38,9 +45,9 @@ const isMobile = (): boolean => {
 // Function to copy to clipboard
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text).then(() => {
-    toast.success("Coordinates copied to clipboard!"); // Show toast notification after copy
+    toast.success("Coordinates copied to clipboard!");
   }).catch(err => {
-    toast.error("Failed to copy coordinates."); // Error handling
+    toast.error("Failed to copy coordinates.");
   });
 };
 
@@ -49,7 +56,7 @@ export default function MapComponent() {
   const searchQuery = useObservable(selectSearchQuery()) || '';
   const [mapCenter, setMapCenter] = useState<[number, number]>([43.2081, -71.5376]);
   const [isBenefitsModalOpen, setIsBenefitsModalOpen] = useState(false);
-  const [activeTooltip, setActiveTooltip] = useState<number | null>(null); // State to track the active marker's tooltip
+  const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [displayFarms, setDisplayFarms] = useState<Farm[]>([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
@@ -120,14 +127,14 @@ export default function MapComponent() {
 
   // Handle navigation button press
   const handleNavigationClick = (farm: Farm, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent the click from closing the tooltip
+    event.stopPropagation(); // Prevent the click from closing the popup
     const googleMapsUrl = getGoogleMapsUrl(farm);
     const geoLink = getGeoLink(farm);
 
     if (isAndroid()) {
-      window.location.href = geoLink; // Use geo link for Android
+      window.location.href = geoLink;
     } else {
-      window.location.href = googleMapsUrl; // Fallback to Google Maps URL for iOS or non-supported devices
+      window.location.href = googleMapsUrl;
     }
 
     // Copy the coordinates or address to clipboard
@@ -147,46 +154,29 @@ export default function MapComponent() {
                 key={index} 
                 position={[farm.latitude, farm.longitude]} 
                 eventHandlers={{
-                  click: () => handleMarkerClick(index) // For mobile and desktop click
+                  click: () => handleMarkerClick(index)
                 }}
               >
-                <Popup // Popup instead of Tooltip for interaction
-                  interactive 
-                  keepInView
-                >
+                <Popup interactive keepInView>
                   <div style={tooltipStyle}>
-                    {/* Farm Name */}
                     <div className="font-semibold text-lg">
                       {farm.name} ({farm.miles} mi)
                     </div>
-
-                    {/* Location */}
                     <div className="text-sm text-gray-500">
                       {farm.city}, {farm.state}
                     </div>
-
-                    {/* Products */}
                     <div className="text-xs text-gray-400">
                       {farm.products.join(', ')}
                     </div>
-
-                    {/* Link to farm website */}
                     <div className="mt-2">
-                      <a
-                        href={`https://${farm.website}`} // assuming farm.website is a valid URL
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={farmLinkStyle}
-                      >
+                      <a href={`https://${farm.website}`} target="_blank" rel="noopener noreferrer" style={farmLinkStyle}>
                         Visit Site
                       </a>
                     </div>
-
-                    {/* Show navigation button only on mobile */}
                     {isMobile() && (
                       <div className="mt-3 flex justify-center">
                         <button
-                          onClick={(event) => handleNavigationClick(farm, event)} // Direct navigation using geo link or Google Maps URL
+                          onClick={(event) => handleNavigationClick(farm, event)}
                           className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded flex items-center"
                         >
                           <Navigation className="mr-2" size={16} />
@@ -206,8 +196,8 @@ export default function MapComponent() {
           <SearchComponent
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            suggestions={unifiedList} // Use unified list of suggestions and farms, default to empty array
-            handleFarmClick={() => {}} // Handle farm clicks if necessary
+            suggestions={unifiedList}
+            handleFarmClick={() => {}}
           />
         </div>
 

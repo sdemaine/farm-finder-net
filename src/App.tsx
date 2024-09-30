@@ -10,6 +10,7 @@ import FarmProducts from './components/farm-admin/FarmProducts';
 import FarmDetail from './components/farm-admin/FarmDetail';
 import FarmGalleryUpload from './components/farm-admin/FarmGalleryUpload';
 import FarmOwners from './components/app-admin/FarmOwners';
+import 'leaflet/dist/leaflet.css';
 
 export default function App() {
   return (
