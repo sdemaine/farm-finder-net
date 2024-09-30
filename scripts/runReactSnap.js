@@ -1,7 +1,7 @@
 import { run } from 'react-snap';
 
 run({
-  source: 'dist',  // Change this to 'dist' to match your Vite output
+  source: 'dist',
   destination: 'dist',
   inlineCss: true,
   puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'],

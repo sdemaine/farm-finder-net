@@ -21,14 +21,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Commit updated package-lock.json
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add package-lock.json
-          git commit -m "Update package-lock.json" || echo "No changes to commit"
-          git push
-
       - name: Install Vercel CLI
         run: npm install -g vercel
 
