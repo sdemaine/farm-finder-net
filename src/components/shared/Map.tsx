@@ -5,9 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useObservable } from '../../hooks/useObservable';
-import { selectFilteredFarms, selectSearchQuery } from '../../state/store';
-import { setSearchQuery } from '../../state/actions';
-import { useDispatch } from 'react-redux';
+import { selectFilteredFarms, selectSearchQuery, updateState } from '../../state/store'; // RxJS store functions
 import { Farm } from '../../types/Farm';
 import { Button } from '../../components/ui/button';
 import { Navigation } from 'lucide-react';
@@ -15,10 +13,11 @@ import { toast } from 'react-toastify';
 import BenefitsModal from '../BenefitsModal';
 import SearchComponent from './SearchComponent';
 
+// Leaflet marker icon configuration
 L.Marker.prototype.options.icon = L.icon({
-  iconRetinaUrl: 'leaflet/dist/images/marker-icon-2x.png',
-  iconUrl: 'leaflet/dist/images/marker-icon.png',
-  shadowUrl: 'leaflet/dist/images/marker-shadow.png',
+  iconRetinaUrl: '/leaflet/images/marker-icon-2x.png',
+  iconUrl: '/leaflet/images/marker-icon.png',
+  shadowUrl: '/leaflet/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -34,10 +33,8 @@ const searchSuggestions = [
 ];
 
 export default function MapComponent() {
-  const dispatch = useDispatch();
-
+  // Observing the filtered farms and search query using RxJS observables
   const rawFilteredFarms = useObservable(selectFilteredFarms()) || [];
-
   const searchQuery = useObservable(selectSearchQuery()) || '';
 
   const observedFilteredFarms = useMemo(() => rawFilteredFarms || [], [rawFilteredFarms]);
@@ -51,6 +48,7 @@ export default function MapComponent() {
 
   const searchBoxRef = useRef<HTMLDivElement>(null);
 
+  // Filtering farms and suggestions based on the search query
   useEffect(() => {
     if (searchQuery.length >= 3) {
       const newFilteredSuggestions = searchSuggestions.filter((term) =>
@@ -72,6 +70,7 @@ export default function MapComponent() {
 
   const unifiedList = [...filteredSuggestions, ...displayFarms];
 
+  // Handling marker click events
   const handleMarkerClick = (index: number) => {
     setActiveTooltip(index === activeTooltip ? null : index);
   };
@@ -84,19 +83,25 @@ export default function MapComponent() {
     return typeof window !== 'undefined' && /Mobi|Android/i.test(window.navigator.userAgent);
   };
 
-  const getGeoLink = (farm: Farm) => `geo:${farm.latitude},${farm.longitude}`;
-  const getGoogleMapsUrl = (farm: Farm) => `https://www.google.com/maps/dir/?api=1&destination=${farm.latitude},${farm.longitude}`;
+  const isIOS = () => {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+  };
+
+  const getNavigationUrl = (farm: Farm) => {
+    if (isIOS()) {
+      // Apple Maps URL for iOS devices
+      return `maps://?daddr=${farm.latitude},${farm.longitude}`;
+    } else {
+      // Google Maps URL for Android devices
+      return `google.navigation:q=${farm.latitude},${farm.longitude}`;
+    }
+  };
 
   const handleNavigationClick = (farm: Farm, event: React.MouseEvent) => {
     event.stopPropagation();
-    const googleMapsUrl = getGoogleMapsUrl(farm);
-    const geoLink = getGeoLink(farm);
-
-    if (isAndroid()) {
-      window.location.href = geoLink;
-    } else {
-      window.location.href = googleMapsUrl;
-    }
+   
+    const navigationUrl = getNavigationUrl(farm);
+    window.location.href = navigationUrl;
   };
 
   return (
@@ -144,7 +149,7 @@ export default function MapComponent() {
         <div ref={searchBoxRef} className="absolute top-4 left-4 right-4 z-10">
           <SearchComponent
             searchQuery={searchQuery}
-            setSearchQuery={(query) => dispatch(setSearchQuery(query))}
+            setSearchQuery={(query) => updateState({ searchQuery: query })} // Using RxJS updateState to set search query
             suggestions={unifiedList}
             handleFarmClick={() => { }}
           />

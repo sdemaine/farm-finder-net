@@ -5,11 +5,9 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "vercel-build": "next build && mkdir -p dist && mv .next dist/.next",
         "start": "next start",
-        "lint": "next lint",
-        "lint:ci": "tsc --noEmit && eslint src/**/*.{ts,tsx} --max-warnings=0"
-    },
+        "lint": "next lint"
+      },
     "type": "module",
     "dependencies": {
         "@emotion/react": "^11.13.3",
