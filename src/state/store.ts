@@ -1,7 +1,8 @@
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Farm } from '../types/Farm';
-import { supabaseService } from '@/services/supabase-service';
+import { supabaseService } from 'src/services/supabase-service';
+// import { supabaseService } from '@/services/supabase-service';
 
 interface AppState {
   allFarms: Farm[];

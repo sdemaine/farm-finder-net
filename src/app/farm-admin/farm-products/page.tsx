@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Button } from "src/components/ui/button";
+import { Label } from "src/components/ui/label";
 import { useRouter } from "next/navigation";
-import { MultiSelect } from "@/components/ui/multi-select"; // Assuming you have a MultiSelect component
+import { MultiSelect } from "src/components/ui/multi-select"; // Assuming you have a MultiSelect component
 
 // Sample GlobalProductList (can be fetched from an API or stored globally)
 const GlobalProductList = [

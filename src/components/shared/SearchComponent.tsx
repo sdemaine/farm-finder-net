@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
+import { Input } from 'src/components/ui/input';
 import { Farm } from '../../types/Farm';
 import { Star } from 'lucide-react';
 

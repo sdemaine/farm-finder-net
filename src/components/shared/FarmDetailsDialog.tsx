@@ -1,9 +1,9 @@
 "use client";
 
 import React from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from 'src/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { Button } from '@/components/ui/button';
+import { Button } from 'src/components/ui/button';
 import { RotateCw, Star } from 'lucide-react';
 import ReactCardFlip from 'react-card-flip';
 import { Farm } from '../../types/Farm';

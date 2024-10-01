@@ -1,10 +1,10 @@
 "use client";
 
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { Button } from 'src/components/ui/button';
+import { Input } from 'src/components/ui/input';
+import { Textarea } from 'src/components/ui/textarea';
+import { Label } from 'src/components/ui/label';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 

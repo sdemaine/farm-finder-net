@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "src/components/ui/dialog";
+import { Button } from "src/components/ui/button";
 
 // Importing icons from react-lucide
 import {
@@ -143,7 +143,7 @@ export function ModalMenu() {
                   handleNavigate("/farm-admin/farm-gallery-upload")
                 }
               >
-                <Image className="mr-2" /> {/* Icon for Farm Gallery */}
+                <Image className="mr-2" aria-label="Farm Gallery" /> {/* Icon for Farm Gallery */}
                 Farm Gallery Upload
               </Button>
             </div>

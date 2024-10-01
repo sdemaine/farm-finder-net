@@ -1,8 +1,8 @@
 // app/layout.tsx
 import './globals.css'; // Import global styles if you have any
 import { ReactNode } from 'react';
-import { ModalMenu } from "@/components/shared/menu/ModalMenu";
-import { ConfigMenuModal } from "@/components/shared/menu/ConfigMenuModal";
+import { ModalMenu } from "src/components/shared/menu/ModalMenu";
+import { ConfigMenuModal } from "src/components/shared/menu/ConfigMenuModal";
 
 export const metadata = {
   title: "FarmFinder",
