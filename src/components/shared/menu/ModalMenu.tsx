@@ -1,45 +1,57 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "src/components/ui/dialog";
+import { Button } from "src/components/ui/button";
 
 // Importing icons from react-lucide
-import { 
-  Settings, 
-  ShoppingCart, 
-  Users, 
-  Star, 
-  Layout, 
-  Package, 
-  FileText, 
-  Image, 
-  MapPin, 
-  Info, 
-  Mail 
-} from 'lucide-react';
+import {
+  Settings,
+  ShoppingCart,
+  Users,
+  Star,
+  Layout,
+  Package,
+  FileText,
+  Image,
+  MapPin,
+  Info,
+  Mail,
+} from "lucide-react";
 
 export function ModalMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAppAdminOpen, setIsAppAdminOpen] = useState(false); // State for AppAdmin sub-menu
   const [isFarmAdminOpen, setIsFarmAdminOpen] = useState(false); // State for FarmAdmin sub-menu
-  const navigate = useNavigate();
+
+  const router = useRouter(); // Using Next.js router
 
   const handleNavigate = (path: string) => {
     setIsOpen(false);
-    navigate(path);
+    router.push(path); // Use Next.js router to navigate
   };
+
+  // const router = useRouter(); // Using Next.js router
+
+  // const handleNavigate = (path: string) => {
+  //   setIsOpen(false);
+  //   router.push(path); // Use Next.js router to navigate
+  // };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="text-2xl font-bold">≡</Button>
+        <Button variant="ghost" className="text-2xl font-bold">
+          ≡
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -56,7 +68,7 @@ export function ModalMenu() {
             onClick={() => setIsAppAdminOpen(!isAppAdminOpen)}
           >
             <Settings className="mr-2" /> {/* Icon for App Admin */}
-            App Admin {isAppAdminOpen ? '▲' : '▼'}
+            App Admin {isAppAdminOpen ? "▲" : "▼"}
           </Button>
 
           {isAppAdminOpen && (
@@ -64,7 +76,7 @@ export function ModalMenu() {
               <Button
                 variant="ghost"
                 className="text-lg justify-start flex items-center"
-                onClick={() => handleNavigate('/app-admin/products')}
+                onClick={() => handleNavigate("/app-admin/global-product-list")}
               >
                 <ShoppingCart className="mr-2" /> {/* Icon for Products */}
                 Products
@@ -72,7 +84,7 @@ export function ModalMenu() {
               <Button
                 variant="ghost"
                 className="text-lg justify-start flex items-center"
-                onClick={() => handleNavigate('/app-admin/farm-owners')}
+                onClick={() => handleNavigate("/app-admin/farm-owners")}
               >
                 <Users className="mr-2" /> {/* Icon for Farm Owners */}
                 Farm Owners
@@ -80,7 +92,7 @@ export function ModalMenu() {
               <Button
                 variant="ghost"
                 className="text-lg justify-start flex items-center"
-                onClick={() => handleNavigate('/app-admin/farmSpotlight')}
+                onClick={() => handleNavigate("/app-admin/farm-spotlight")}
               >
                 <Star className="mr-2" /> {/* Icon for Farm Spotlight */}
                 Farm Spotlight
@@ -95,7 +107,7 @@ export function ModalMenu() {
             onClick={() => setIsFarmAdminOpen(!isFarmAdminOpen)}
           >
             <Layout className="mr-2" /> {/* Icon for Farm Admin */}
-            Farm Admin {isFarmAdminOpen ? '▲' : '▼'}
+            Farm Admin {isFarmAdminOpen ? "▲" : "▼"}
           </Button>
 
           {isFarmAdminOpen && (
@@ -103,7 +115,7 @@ export function ModalMenu() {
               <Button
                 variant="ghost"
                 className="text-lg justify-start flex items-center"
-                onClick={() => handleNavigate('/farm-admin/dashboard')}
+                onClick={() => handleNavigate("/farm-admin/dashboard")}
               >
                 <Layout className="mr-2" /> {/* Icon for Dashboard */}
                 Dashboard
@@ -111,7 +123,7 @@ export function ModalMenu() {
               <Button
                 variant="ghost"
                 className="text-lg justify-start flex items-center"
-                onClick={() => handleNavigate('/farm-admin/products')}
+                onClick={() => handleNavigate("/farm-admin/farm-products")}
               >
                 <Package className="mr-2" /> {/* Icon for Farm Products */}
                 Farm Products
@@ -119,7 +131,7 @@ export function ModalMenu() {
               <Button
                 variant="ghost"
                 className="text-lg justify-start flex items-center"
-                onClick={() => handleNavigate('/farm-admin/farm-detail')}
+                onClick={() => handleNavigate("/farm-admin/farm-detail")}
               >
                 <FileText className="mr-2" /> {/* Icon for Farm Detail */}
                 Farm Detail
@@ -127,23 +139,37 @@ export function ModalMenu() {
               <Button
                 variant="ghost"
                 className="text-lg justify-start flex items-center"
-                onClick={() => handleNavigate('/farm-admin/farm-gallery-upload')}
+                onClick={() =>
+                  handleNavigate("/farm-admin/farm-gallery-upload")
+                }
               >
-                <Image className="mr-2" /> {/* Icon for Farm Gallery */}
+                <Image className="mr-2" aria-label="Farm Gallery" /> {/* Icon for Farm Gallery */}
                 Farm Gallery Upload
               </Button>
             </div>
           )}
 
-          <Button variant="ghost" className="text-lg justify-start flex items-center" onClick={() => handleNavigate('/')}>
+          <Button
+            variant="ghost"
+            className="text-lg justify-start flex items-center"
+            onClick={() => handleNavigate("/")}
+          >
             <MapPin className="mr-2" /> {/* Icon for Map */}
             Map
           </Button>
-          <Button variant="ghost" className="text-lg justify-start flex items-center" onClick={() => handleNavigate('/about')}>
+          <Button
+            variant="ghost"
+            className="text-lg justify-start flex items-center"
+            onClick={() => handleNavigate("/about-us")}
+          >
             <Info className="mr-2" /> {/* Icon for About */}
             About
           </Button>
-          <Button variant="ghost" className="text-lg justify-start flex items-center" onClick={() => handleNavigate('/contact')}>
+          <Button
+            variant="ghost"
+            className="text-lg justify-start flex items-center"
+            onClick={() => handleNavigate("/contact")}
+          >
             <Mail className="mr-2" /> {/* Icon for Contact */}
             Contact
           </Button>

@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from 'react';
 import {
   Dialog,
@@ -6,12 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "src/components/ui/dialog"
+import { Button } from "src/components/ui/button"
+import { Switch } from "src/components/ui/switch"
+import { Label } from "src/components/ui/label"
+import { Slider } from "src/components/ui/slider"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "src/components/ui/select"
 import { Settings } from 'lucide-react'
 
 export function ConfigMenuModal() {

@@ -1,241 +1,155 @@
-import React, { useState } from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMap,
-} from 'react-leaflet';
-import L, { Icon } from 'leaflet';
+"use client";
+
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Input } from '@/components/ui/input';
 import { useObservable } from '../../hooks/useObservable';
 import { selectFilteredFarms, selectSearchQuery } from '../../state/store';
 import { setSearchQuery } from '../../state/actions';
+import { useDispatch } from 'react-redux';
 import { Farm } from '../../types/Farm';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Star, RotateCw } from 'lucide-react';
-import ReactCardFlip from 'react-card-flip';
-import BenefitsModal from '@/components/BenefitsModal';
-
-// Import marker icons
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
-
-function ChangeView({ center }: { center: [number, number] }) {
-  const map = useMap();
-  map.setView(center, map.getZoom());
-  return null;
-}
-
+import { Button } from '../../components/ui/button';
+import { Navigation } from 'lucide-react';
+import { toast } from 'react-toastify';
+import BenefitsModal from '../BenefitsModal';
+import SearchComponent from './SearchComponent';
 
 L.Marker.prototype.options.icon = L.icon({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
+  iconRetinaUrl: 'leaflet/dist/images/marker-icon-2x.png',
+  iconUrl: 'leaflet/dist/images/marker-icon.png',
+  shadowUrl: 'leaflet/dist/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
 
-// Custom icons for markers
-const defaultIcon = new L.Icon.Default();
-// const preferredIcon = new Icon({
-//   iconUrl: '/path-to-preferred-icon.png',
-//   iconRetinaUrl: '/path-to-preferred-icon@2x.png',
-//   iconSize: [25, 41],
-//   iconAnchor: [12, 41],
-// });
+const searchSuggestions = [
+  "tomatoes", "potatoes", "carrots", "onions", "garlic", "cabbage", "lettuce",
+  "cucumbers", "zucchini", "pumpkins", "corn", "peas", "beans", "radishes", "spinach",
+  "asparagus", "broccoli", "cauliflower", "celery", "chives", "cilantro", "collards",
+  "dill", "fennel", "mint", "parsley", "thyme", "basil"
+];
 
 export default function MapComponent() {
-  const filteredFarms = useObservable(selectFilteredFarms()) || [];
+  const dispatch = useDispatch();
+
+  const rawFilteredFarms = useObservable(selectFilteredFarms()) || [];
+
   const searchQuery = useObservable(selectSearchQuery()) || '';
-  const [mapCenter, setMapCenter] = useState<[number, number]>([
-    43.2081,
-    -71.5376,
-  ]);
-  const [selectedFarm, setSelectedFarm] = useState<Farm | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isCardFlipped, setIsCardFlipped] = useState<boolean>(false);
+
+  const observedFilteredFarms = useMemo(() => rawFilteredFarms || [], [rawFilteredFarms]);
+
+  const [mapCenter, setMapCenter] = useState<[number, number]>([43.2081, -71.5376]);
   const [isBenefitsModalOpen, setIsBenefitsModalOpen] = useState(false);
+  const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [displayFarms, setDisplayFarms] = useState<Farm[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  const searchBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (searchQuery.length >= 3) {
+      const newFilteredSuggestions = searchSuggestions.filter((term) =>
+        term.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredSuggestions(newFilteredSuggestions);
+
+      const farmsFilteredByProducts = observedFilteredFarms.filter((farm) =>
+        farm.products.some((product) =>
+          product.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+      setDisplayFarms(farmsFilteredByProducts);
+    } else {
+      setFilteredSuggestions([]);
+      setDisplayFarms([]);
+    }
+  }, [searchQuery, observedFilteredFarms]);
+
+  const unifiedList = [...filteredSuggestions, ...displayFarms];
+
+  const handleMarkerClick = (index: number) => {
+    setActiveTooltip(index === activeTooltip ? null : index);
   };
 
-  const handleFarmClick = (farm: Farm) => {
-    setSelectedFarm(farm);
-    setMapCenter([farm.latitude, farm.longitude]);
-    setIsModalOpen(true);
-    setIsCardFlipped(false);
-    setSearchQuery('');
+  const isAndroid = (): boolean => {
+    return typeof window !== 'undefined' && /Android/i.test(window.navigator.userAgent);
   };
 
-  const handleCardFlip = () => {
-    setIsCardFlipped(!isCardFlipped);
+  const isMobile = (): boolean => {
+    return typeof window !== 'undefined' && /Mobi|Android/i.test(window.navigator.userAgent);
   };
 
-  const sortedFarmsList =
-    searchQuery.length >= 3
-      ? [...filteredFarms].sort(
-        (a, b) => (b.preferred ? 1 : 0) - (a.preferred ? 1 : 0)
-      )
-      : [];
+  const getGeoLink = (farm: Farm) => `geo:${farm.latitude},${farm.longitude}`;
+  const getGoogleMapsUrl = (farm: Farm) => `https://www.google.com/maps/dir/?api=1&destination=${farm.latitude},${farm.longitude}`;
 
-  const FrontCard = () => (
-    <div className="card-face p-6">
-      <div className="flex justify-between items-start">
-        <h2 className="text-xl font-bold">{selectedFarm?.name}</h2>
-        {selectedFarm?.preferred && (
-          <Star className="h-5 w-5 text-yellow-400" />
-        )}
-      </div>
-      <div className="mt-2">
-        <p>
-          <strong>Location:</strong> {selectedFarm?.city}, {selectedFarm?.state}
-        </p>
-        <p>
-          <strong>Distance:</strong> {selectedFarm?.miles} miles
-        </p>
-        <p>
-          <strong>Products:</strong> {selectedFarm?.products.join(', ')}
-        </p>
-        {selectedFarm?.preferred && (
-          <p className="text-yellow-600 font-semibold mt-2">
-            Preferred Farm
-          </p>
-        )}
-      </div>
-      {selectedFarm?.preferred && (
-        <Button
-          className="absolute bottom-4 right-4"
-          variant="outline"
-          size="sm"
-          onClick={handleCardFlip}
-        >
-          <RotateCw className="h-4 w-4 mr-2" />
-          More Info
-        </Button>
-      )}
-    </div>
-  );
+  const handleNavigationClick = (farm: Farm, event: React.MouseEvent) => {
+    event.stopPropagation();
+    const googleMapsUrl = getGoogleMapsUrl(farm);
+    const geoLink = getGeoLink(farm);
 
-  const BackCard = () => (
-    <div className="card-face p-6">
-      <div className="flex justify-between items-start">
-        <h2 className="text-xl font-bold">
-          {selectedFarm?.name} - Additional Info
-        </h2>
-        {selectedFarm?.preferred && (
-          <Star className="h-5 w-5 text-yellow-400" />
-        )}
-      </div>
-      <div className="mt-2 space-y-2">
-        <p>
-          <strong>Description:</strong> {selectedFarm?.description}
-        </p>
-        <p>
-          <strong>Founded:</strong> {selectedFarm?.foundedYear}
-        </p>
-        <p>
-          <strong>Farm Size:</strong> {selectedFarm?.farmSize}
-        </p>
-        <p>
-          <strong>Certifications:</strong>{' '}
-          {selectedFarm?.certifications?.join(', ')}
-        </p>
-        <p>
-          <strong>Contact Email:</strong> {selectedFarm?.contactEmail}
-        </p>
-        <p>
-          <strong>Phone Number:</strong> {selectedFarm?.phoneNumber}
-        </p>
-      </div>
-      <Button
-        className="absolute bottom-4 right-4"
-        variant="outline"
-        size="sm"
-        onClick={handleCardFlip}
-      >
-        <RotateCw className="h-4 w-4 mr-2" />
-        Back
-      </Button>
-    </div>
-  );
+    if (isAndroid()) {
+      window.location.href = geoLink;
+    } else {
+      window.location.href = googleMapsUrl;
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen">
       <div className="flex-grow relative">
-        {/* Map Container */}
         <div className="absolute inset-0 z-0">
-          <MapContainer
-            center={mapCenter}
-            zoom={8}
-            className="h-full w-full"
-            zoomControl={false}
-          >
-            <ChangeView center={mapCenter} />
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {filteredFarms.map((farm, index) => (
+          <MapContainer center={mapCenter} zoom={8} className="h-full w-full" zoomControl={false}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {observedFilteredFarms.map((farm, index) => (
               <Marker
                 key={index}
                 position={[farm.latitude, farm.longitude]}
-                icon={farm.preferred ? defaultIcon : defaultIcon}
                 eventHandlers={{
-                  click: () => handleFarmClick(farm),
+                  click: () => handleMarkerClick(index)
                 }}
-              />
+              >
+                <Popup interactive keepInView>
+                  <div>
+                    <div className="font-semibold text-lg">{farm.name} ({farm.miles} mi)</div>
+                    <div className="text-sm text-gray-500">{farm.city}, {farm.state}</div>
+                    <div className="text-xs text-gray-400">{farm.products.join(', ')}</div>
+                    <div className="mt-2">
+                      <a href={`https://${farm.website}`} target="_blank" rel="noopener noreferrer">
+                        Visit Site
+                      </a>
+                    </div>
+                    {isMobile() && (
+                      <div className="mt-3 flex justify-center">
+                        <button
+                          onClick={(event) => handleNavigationClick(farm, event)}
+                          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded flex items-center"
+                        >
+                          <Navigation className="mr-2" size={16} />
+                          Navigate
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </Popup>
+              </Marker>
             ))}
           </MapContainer>
         </div>
 
-        {/* Search input and results */}
-        <div className="absolute top-4 left-4 right-4 z-10">
-          <Input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="search for products..."
-            className="shadow-md rounded-full p-2 pl-4 w-full text-lg h-12 bg-white border-2 border-[#333333]"
+        <div ref={searchBoxRef} className="absolute top-4 left-4 right-4 z-10">
+          <SearchComponent
+            searchQuery={searchQuery}
+            setSearchQuery={(query) => dispatch(setSearchQuery(query))}
+            suggestions={unifiedList}
+            handleFarmClick={() => { }}
           />
-          {sortedFarmsList.length > 0 && (
-            <ul className="bg-white border rounded-2xl mt-1 shadow-lg max-h-60 overflow-y-auto">
-              {sortedFarmsList.map((farm, index) => (
-                <li
-                  key={index}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center justify-between"
-                  onClick={() => handleFarmClick(farm)}
-                >
-                  <div>
-                    <div className="font-semibold">
-                      {farm.name}{' '}
-                      <span className="text-gray-500 font-normal">
-                        {farm.miles}mi
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {farm.city}, {farm.state}
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      {farm.products.join(', ')}
-                    </div>
-                  </div>
-                  {farm.preferred && (
-                    <Star className="h-5 w-5 text-yellow-400 flex-shrink-0" />
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
 
-        {/* Call to Action Button */}
         <div className="absolute bottom-24 right-4 z-20">
           <Button
             onClick={() => setIsBenefitsModalOpen(true)}
@@ -246,34 +160,11 @@ export default function MapComponent() {
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="bg-[#f9f7f4] border-t border-gray-300 p-2 text-center text-sm z-30 relative">
         <p>Quick Guide</p>
       </footer>
 
-      {/* Farm Details Modal */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px] p-0">
-          <ReactCardFlip isFlipped={isCardFlipped} flipDirection="horizontal">
-            <FrontCard />
-            <BackCard />
-          </ReactCardFlip>
-          <Button
-            className="absolute top-2 right-2 z-20"
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsModalOpen(false)}
-          >
-            Close
-          </Button>
-        </DialogContent>
-      </Dialog>
-
-      {/* Benefits Modal */}
-      <BenefitsModal
-        isOpen={isBenefitsModalOpen}
-        onClose={() => setIsBenefitsModalOpen(false)}
-      />
+      <BenefitsModal isOpen={isBenefitsModalOpen} onClose={() => setIsBenefitsModalOpen(false)} />
     </div>
   );
 }
