@@ -2,15 +2,20 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MapComponent from './components/shared/Map';
 import About from './components/shared/About';
 import Contact from './components/shared/Contact';
-import { ModalMenu } from '@/components/shared/menu/ModalMenu';
-import { ConfigMenuModal } from '@/components/shared/menu/ConfigMenuModal';
-import Dashboard from './components/farm-admin/Dashboard';
-import GlobalProductList from './components/app-admin/GlobalProductList';
-import FarmProducts from './components/farm-admin/FarmProducts';
-import FarmDetail from './components/farm-admin/FarmDetail';
-import FarmGalleryUpload from './components/farm-admin/FarmGalleryUpload';
-import FarmOwners from './components/app-admin/FarmOwners';
-import 'leaflet/dist/leaflet.css';
+// import { ModalMenu } from '@components/shared/menu/ModalMenu';
+// import { ConfigMenuModal } from '@components/shared/menu/ConfigMenuModal';
+// import GlobalProductList from '@app/app-admin/products/page';
+// import FarmProducts from '@components/farm-admin/FarmProducts';
+// import FarmDetail from '@components/farm-admin/FarmDetail';
+// import FarmGalleryUpload from '@components/farm-admin/FarmGalleryUpload';
+// import FarmOwners from '@components/app-admin/FarmOwners';
+import Dashboard from './app/farm-admin/dashboard/page';
+import FarmOwners from './app/app-admin/farm-owners/page';
+import GlobalProductList from './app/app-admin/global-product-list/page';
+import FarmDetail from './app/farm-admin/farm-detail/page';
+import FarmProducts from './app/farm-admin/farm-products/page';
+import { ConfigMenuModal } from './components/shared/menu/ConfigMenuModal';
+import { ModalMenu } from './components/shared/menu/ModalMenu';
 
 export default function App() {
   return (
@@ -43,10 +48,7 @@ export default function App() {
             <Route path="/farm-admin/dashboard" element={<Dashboard />} />
             <Route path="/farm-admin/products" element={<FarmProducts />} />
             <Route path="/farm-admin/farm-detail" element={<FarmDetail />} />
-            <Route path="/farm-admin/farm-gallery-upload" element={<FarmGalleryUpload />} />
-
-
-
+            
           </Routes>
         </main>
         <footer className="bg-gray-800 text-white py-4">

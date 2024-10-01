@@ -12,8 +12,8 @@ import {
   TextField,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
-import { fetchGlobalProducts, addProduct, updateProduct, deleteProduct } from '@/services/product-service';
-import { Product } from '@/types/Products';
+import { fetchGlobalProducts, addProduct, updateProduct, deleteProduct } from 'src/services/product-service';
+import { Product } from 'src/types/Products';
 
 
 
